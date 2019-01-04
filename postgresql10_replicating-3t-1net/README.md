@@ -5,7 +5,7 @@ Originally came from: https://portal.azure.com/#create/Microsoft.Template/uri/ht
 This template creates one master PostgreSQL 10 server with streaming-replication to multiple replication servers. Each database server is configured with multiple data disks that are striped into RAID-0 configuration using mdadm.
 
 The template creates the following deployment resources:
-* Virtual Network with two subnets: "dmz 10.0.0.0/24" for the jumpbox VM and "data 10.0.1.0/24" for the PostgreSQL master and slave VMs
+* Virtual Network with one vnet and three subnets: "public 172.16.1.0/24" for the Bastion/Jumpbox VM | "private-apps 172.16.2.0/24" for internal services |  "private-data 172.16.3.4/24" for pgsql master and slave VMs
 * Storage accounts to store VM data disks
 * Public IP address for accessing the jumpbox via ssh
 * Network interface card for each VM
@@ -14,11 +14,11 @@ The template creates the following deployment resources:
 NOTE: To access the PostgreSQL servers, you need to use the externally accessible jumpbox VM and ssh from it into the backend servers.
 
 Assuming your domainName parameter was "mypsqljumpbox" and region was "West US"
-* Master PostgreSQL server will be deployed at the first available IP address in the subnet: 10.0.1.4
-* Slave PostgreSQL servers will be deployed in the other IP addresses: 10.0.1.5, 10.0.1.6, 10.0.1.7, etc.
-* From your computer, SSH into the jumpbox `ssh mypsqljumpbox.westus.cloudapp.azure.com`
-* From the jumpbox, SSH into the master PostgreSQL server `ssh 10.0.1.4`
-* On the master (e.g. 10.0.1.4), use the following code to create table and some test data within your PostgreSQL master database.
+* Master PostgreSQL server will be deployed at the first available IP address in the subnet: 172.163.3.4
+* Slave PostgreSQL servers will be deployed in the other IP addresses: 172.16.3.5,...etc.
+* From your computer, SSH into the Bastion host `ssh mypsqljumpbox.westus.cloudapp.azure.com`
+* From Bastion, SSH into App server to conntect to PGSQL cluster
+* On the master, use the following code to create table and some test data within your PostgreSQL master database.
 
 ```
 sudo -u postgres psql
@@ -28,7 +28,7 @@ insert into table1 (name) values ('name2');
 select * from table1;
 ```
 
-* From the jumpbox, SSH into one of the slave PostgreSQL servers `ssh 10.0.1.5` and use psql to check that the data propaged properly
+* From the jumpbox, SSH into one of the slave PostgreSQL servers and use psql to check that the data propaged properly
 
 ```
 sudo -u postgres psql
