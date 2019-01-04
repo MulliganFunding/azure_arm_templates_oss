@@ -7,7 +7,7 @@ This template creates one master PostgreSQL 10 server with streaming-replication
 The template creates the following deployment resources:
 * Virtual Network with one vnet and three subnets: "public 172.16.1.0/24" for the Bastion/Jumpbox VM | "private-apps 172.16.2.0/24" for internal services |  "private-data 172.16.3.4/24" for pgsql master and slave VMs
 * Storage accounts to store VM data disks
-* Public IP address for accessing the jumpbox via ssh
+* Public IP address for accessing the Bastion via ssh
 * Network interface card for each VM
 * Multiple remotely-hosted Custom Script Extensions to strip the data disks and to install and configure PostgreSQL services
 
